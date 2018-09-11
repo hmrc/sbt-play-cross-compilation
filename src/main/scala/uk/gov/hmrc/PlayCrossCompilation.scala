@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package sbt
+package uk.gov.hmrc
 
-import Keys._
+import sbt.Keys._
+import sbt._
 
 object PlayCrossCompilation {
 
