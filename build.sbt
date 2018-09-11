@@ -19,8 +19,8 @@ lazy val project = Project(pluginName, file("."))
     resolvers += Resolver.url("sbt-plugin-releases", url("https://dl.bintray.com/content/sbt/sbt-plugin-releases"))(
       Resolver.ivyStylePatterns),
     libraryDependencies ++= Seq(
-      "org.scalatest"           %% "scalatest"     % "3.0.5"      % Test,
-      "org.mockito"             %  "mockito-all"   % "1.10.19"    % Test,
-      "org.pegdown"             %  "pegdown"       % "1.6.0"      % Test
+      "org.scalatest" %% "scalatest" % "3.0.5" % Test,
+      "org.scalamock" %% "scalamock" % "4.1.0" % Test,
+      "org.pegdown"   %  "pegdown"   % "1.6.0" % Test
     )
   )

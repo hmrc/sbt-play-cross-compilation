@@ -18,29 +18,24 @@ package uk.gov.hmrc
 
 import sbt.Keys._
 import sbt._
+import uk.gov.hmrc.PlayCrossCompilation.{Play25, Play26, PlayVersion}
 
-object PlayCrossCompilation {
+object PlayCrossCompilation extends PlayCrossCompilation(sys.env.get) {
 
   sealed trait PlayVersion
   case object Play25 extends PlayVersion
   case object Play26 extends PlayVersion
 
-  val playVersion: PlayVersion =
-    sys.env.get("PLAY_VERSION") match {
+}
+
+abstract class PlayCrossCompilation(findEnvProperty: String => Option[String]) {
+
+  lazy val playVersion: PlayVersion =
+    findEnvProperty("PLAY_VERSION") match {
       case Some("2.5")   => Play25
       case Some("2.6")   => Play26
       case None          => Play25 // default to Play 2.5 for local development
       case Some(sthElse) => throw new Exception(s"Play version '$sthElse' not supported")
-    }
-
-  private val releaseSuffix, playDir =
-    if (playVersion == Play25) "play-25" else "play-26"
-
-  private def updateVersion(v: String): String =
-    if (v.endsWith("-SNAPSHOT")) {
-      v.stripSuffix("-SNAPSHOT") + "-" + releaseSuffix + "-SNAPSHOT"
-    } else {
-      v + "-" + releaseSuffix
     }
 
   def apply() = Seq(
@@ -61,4 +56,13 @@ object PlayCrossCompilation {
     }
   )
 
+  private lazy val releaseSuffix, playDir =
+    if (playVersion == Play25) "play-25" else "play-26"
+
+  private[hmrc] def updateVersion(v: String): String =
+    if (v.endsWith("-SNAPSHOT")) {
+      v.stripSuffix("-SNAPSHOT") + "-" + releaseSuffix + "-SNAPSHOT"
+    } else {
+      v + "-" + releaseSuffix
+    }
 }
