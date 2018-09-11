@@ -7,7 +7,7 @@ import uk.gov.hmrc.versioning.SbtGitVersioning
 val pluginName = "sbt-play-cross-compilation"
 
 lazy val project = Project(pluginName, file("."))
-  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning)
+  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory)
   .settings(
     sbtPlugin := true,
     majorVersion := 0,
