@@ -14,7 +14,15 @@ By default Play 2.5 branch is used. In order to switch between them `PLAY_VERSIO
 
 The common `scala` folders in both `main` and `test` are still honoured and should contain not Play version specific files. 
 
-Usage:
+In order to run `sbt` commands agains certain version of Play, `PLAY_VERSION` environment variable has to be set to either `2.5` or `2.6` value. If mentioned variable is not set, `2.5` value is the default.
+Example:
+```
+export PLAY_VERSION=2.6
+```
+
+In regards to Intellij opening a project in desired Play version, `launchctl setenv PLAY_VERSION 2.6` (on MACOS) has to be executed before starting the IDE. Standard bash `export` command seems not to be honoured by Intellij.
+
+Usage in `build.sbt`:
 
 ```scala
 import sbt.PlayCrossCompilation._
