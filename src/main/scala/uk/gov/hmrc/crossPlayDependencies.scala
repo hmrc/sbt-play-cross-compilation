@@ -19,7 +19,7 @@ package uk.gov.hmrc
 import sbt.ModuleID
 import uk.gov.hmrc.PlayCrossCompilation._
 
-object Dependencies {
+object crossPlayDependencies {
 
   def apply(
     common: Seq[ModuleID]    = Seq.empty,

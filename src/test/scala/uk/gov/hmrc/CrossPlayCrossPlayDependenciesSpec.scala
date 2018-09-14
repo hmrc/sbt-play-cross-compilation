@@ -22,14 +22,14 @@ import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import sbt._
 import uk.gov.hmrc.PlayCrossCompilation.{Play25, Play26}
 
-class DependenciesSpec extends WordSpec with GeneratorDrivenPropertyChecks {
+class CrossPlayCrossPlayDependenciesSpec extends WordSpec with GeneratorDrivenPropertyChecks {
   import DependenciesGenerators._
 
-  "Dependencies" should {
+  "crossPlayDependencies" should {
 
     "return a list of common dependencies if only these are provided" in {
       forAll(nonEmptyListOf(moduleIds, withMax = 5)) { dependencies =>
-        Dependencies(common = dependencies) should contain theSameElementsAs dependencies
+        crossPlayDependencies(common = dependencies) should contain theSameElementsAs dependencies
       }
     }
 
@@ -38,7 +38,7 @@ class DependenciesSpec extends WordSpec with GeneratorDrivenPropertyChecks {
         nonEmptyListOf(moduleIds, withMax = 5),
         nonEmptyListOf(moduleIds, withMax = 5),
         nonEmptyListOf(moduleIds, withMax = 5)) { (dependencies, play25, play26) =>
-        Dependencies(
+        crossPlayDependencies(
           common      = dependencies,
           play25      = play25,
           play26      = play26,
@@ -52,7 +52,7 @@ class DependenciesSpec extends WordSpec with GeneratorDrivenPropertyChecks {
         nonEmptyListOf(moduleIds, withMax = 5),
         nonEmptyListOf(moduleIds, withMax = 5),
         nonEmptyListOf(moduleIds, withMax = 5)) { (dependencies, play25, play26) =>
-        Dependencies(
+        crossPlayDependencies(
           common      = dependencies,
           play25      = play25,
           play26      = play26,
