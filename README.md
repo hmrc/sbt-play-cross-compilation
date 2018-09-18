@@ -10,11 +10,10 @@ After adding `PlayCrossCompilation()` settings to your `build.sbt` file new set 
 * `src/main/play-25/resources` and`src/main/play-26/resources` for resources  
 * `test/main/play-25` and`test/main/play-26` for tests
 
-By default Play 2.5 branch is used. In order to switch between them `PLAY_VERSION` environment variable has to be set with either `By default Play 2.5 branch is used. In order to switch between them `PLAY_VERSION` environment variable has to be set with either `By default Play 2.5 branch is used. In order to switch between them, `PLAY_VERSION` environment variable has to be set to either `2.5` or `2.6` value.
+By default Play 2.5 branch is used. In order to switch between them, `PLAY_VERSION` environment variable has to be set to either `2.5` or `2.6`.
 
-The common `scala` folders in both `main` and `test` are still honoured and should contain not Play version specific files. 
+The common `scala` folders in both `main` and `test` are still honoured and should source code that is compatible with both versions of play. 
 
-In order to run `sbt` commands agains certain version of Play, `PLAY_VERSION` environment variable has to be set to either `2.5` or `2.6` value. If mentioned variable is not set, `2.5` value is the default.
 Example:
 ```
 export PLAY_VERSION=2.6
