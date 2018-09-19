@@ -14,34 +14,53 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc
+package uk.gov.hmrc.playcrosscompilation
 
 import sbt.Keys._
 import sbt._
-import uk.gov.hmrc.PlayCrossCompilation.{Play25, Play26, PlayVersion}
+import uk.gov.hmrc.playcrosscompilation.PlayVersion.{Play25, Play26}
 
-object PlayCrossCompilation extends PlayCrossCompilation(sys.env.get) {
-
-  sealed trait PlayVersion
+sealed trait PlayVersion
+object PlayVersion {
   case object Play25 extends PlayVersion
   case object Play26 extends PlayVersion
-
 }
 
-abstract class PlayCrossCompilation(findEnvProperty: String => Option[String]) {
+abstract class AbstractPlayCrossCompilation(
+  defaultPlayVersion: PlayVersion,
+  findEnvProperty: String => Option[String] = sys.env.get
+) extends PlayCrossDependency.Implicits {
 
   lazy val playVersion: PlayVersion =
     findEnvProperty("PLAY_VERSION") match {
       case Some("2.5")   => Play25
       case Some("2.6")   => Play26
-      case None          => Play25 // default to Play 2.5 for local development
+      case None          => defaultPlayVersion
       case Some(sthElse) => throw new Exception(s"Play version '$sthElse' not supported")
     }
 
-  def apply() = Seq(
-    version ~= { v =>
-      updateVersion(v)
-    },
+  object DependenciesSeq {
+
+    implicit class ModuleIdOps(moduleID: ModuleID) {
+      def dependencyOf(playVersion: PlayVersion): PlayCrossDependency =
+        PlayCrossDependency(moduleID, playVersion)
+    }
+
+    def apply(dependencies: Object*): Seq[ModuleID] = dependencies.foldLeft(Seq.empty[ModuleID]) {
+      case (collectedDependencies, dependency: ModuleID) =>
+        collectedDependencies :+ dependency
+      case (collectedDependencies, PlayCrossDependency(dependency, dependencyPlayVersion)) =>
+        if (playVersion == dependencyPlayVersion)
+          collectedDependencies :+ dependency
+        else
+          collectedDependencies
+      case (_, other) =>
+        throw new IllegalArgumentException(s"$other dependency type is unknown")
+    }
+  }
+
+  lazy val playCrossCompilationSettings = Seq(
+    version ~= updateVersion,
     unmanagedSourceDirectories in Compile += {
       (sourceDirectory in Compile).value / playDir
     },

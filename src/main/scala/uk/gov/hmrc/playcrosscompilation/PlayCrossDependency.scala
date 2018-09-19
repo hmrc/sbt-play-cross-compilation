@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc
+package uk.gov.hmrc.playcrosscompilation
 
 import sbt.ModuleID
-import uk.gov.hmrc.PlayCrossCompilation._
 
-object crossPlayDependencies {
+case class PlayCrossDependency(moduleID: ModuleID, playVersion: PlayVersion)
 
-  def apply(
-    common: Seq[ModuleID]    = Seq.empty,
-    play25: Seq[ModuleID]    = Seq.empty,
-    play26: Seq[ModuleID]    = Seq.empty,
-    playVersion: PlayVersion = PlayCrossCompilation.playVersion
-  ): Seq[ModuleID] =
-    common ++ (playVersion match {
-      case Play25 => play25
-      case Play26 => play26
-    })
+object PlayCrossDependency {
+
+  object Implicits extends Implicits
+
+  trait Implicits {
+
+    implicit class ModuleIdOps(moduleID: ModuleID) {
+      def dependencyOf(playVersion: PlayVersion): PlayCrossDependency =
+        PlayCrossDependency(moduleID, playVersion)
+    }
+  }
 }
