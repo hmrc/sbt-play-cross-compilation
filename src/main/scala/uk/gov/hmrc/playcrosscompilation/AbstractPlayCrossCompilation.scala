@@ -41,11 +41,6 @@ abstract class AbstractPlayCrossCompilation(
 
   object DependenciesSeq {
 
-    implicit class ModuleIdOps(moduleID: ModuleID) {
-      def dependencyOf(playVersion: PlayVersion): PlayCrossDependency =
-        PlayCrossDependency(moduleID, playVersion)
-    }
-
     def apply(dependencies: Object*): Seq[ModuleID] = dependencies.foldLeft(Seq.empty[ModuleID]) {
       case (collectedDependencies, dependency: ModuleID) =>
         collectedDependencies :+ dependency

@@ -26,11 +26,11 @@ class PlayCrossDependencySpec extends WordSpec with TableDrivenPropertyChecks {
 
   import PlayCrossDependency.Implicits._
 
-  "dependencyOf" should {
+  "crossPlay" should {
 
     forAll(playVersions) { playVersion =>
       s"convert the moduleId the method is invoked on and add the $playVersion playVersion" in {
-        val dependency = "groupId" % "artifactName" % "2.3.4" dependencyOf playVersion
+        val dependency = "groupId" % "artifactName" % "2.3.4" crossPlay playVersion
 
         dependency shouldBe PlayCrossDependency("groupId" % "artifactName" % "2.3.4", playVersion)
       }

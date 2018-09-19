@@ -128,10 +128,10 @@ class AbstractPlayCrossCompilationSpec extends WordSpec with MockFactory with Ta
 
       val nonPlayDependency1 = "group" %% "non-play-1" % "0.1.0"
       val nonPlayDependency2 = "group" %% "non-play-2" % "0.1.0"
-      val play25Dependency1  = "group" %% "play25-1"   % "0.1.0" dependencyOf Play25
-      val play25Dependency2  = "group" %% "play25-2"   % "0.1.0" dependencyOf Play25
-      val play26Dependency1  = "group" %% "play26-1"   % "0.1.0" dependencyOf Play26
-      val play26Dependency2  = "group" %% "play26-2"   % "0.1.0" dependencyOf Play26
+      val play25Dependency1  = "group" %% "play25-1"   % "0.1.0" crossPlay Play25
+      val play25Dependency2  = "group" %% "play25-2"   % "0.1.0" crossPlay Play25
+      val play26Dependency1  = "group" %% "play26-1"   % "0.1.0" crossPlay Play26
+      val play26Dependency2  = "group" %% "play26-2"   % "0.1.0" crossPlay Play26
 
       DependenciesSeq(
         nonPlayDependency1,
@@ -157,10 +157,10 @@ class AbstractPlayCrossCompilationSpec extends WordSpec with MockFactory with Ta
 
       val nonPlayDependency1 = "group" %% "non-play-1" % "0.1.0"
       val nonPlayDependency2 = "group" %% "non-play-2" % "0.1.0"
-      val play25Dependency1  = "group" %% "play25-1"   % "0.1.0" dependencyOf Play25
-      val play25Dependency2  = "group" %% "play25-2"   % "0.1.0" dependencyOf Play25
-      val play26Dependency1  = "group" %% "play26-1"   % "0.1.0" dependencyOf Play26
-      val play26Dependency2  = "group" %% "play26-2"   % "0.1.0" dependencyOf Play26
+      val play25Dependency1  = "group" %% "play25-1"   % "0.1.0" crossPlay Play25
+      val play25Dependency2  = "group" %% "play25-2"   % "0.1.0" crossPlay Play25
+      val play26Dependency1  = "group" %% "play26-1"   % "0.1.0" crossPlay Play26
+      val play26Dependency2  = "group" %% "play26-2"   % "0.1.0" crossPlay Play26
 
       DependenciesSeq(
         nonPlayDependency1,

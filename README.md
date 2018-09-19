@@ -28,11 +28,11 @@ import PlayCrossCompilation._
 
   val test = DependenciesSeq(
     "org.pegdown"            % "pegdown"             % "1.6.0" % Test,
-    "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % Test dependencyOf Play25,
-    "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test dependencyOf Play26
+    "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % Test crossPlay Play25,
+    "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test crossPlay Play26
   )
 ```
-Note: the `dependencyOf` keyword becomes available in the context of `DependenciesSeq` only.
+Note: the `crossPlay` keyword becomes available in the context of `DependenciesSeq` only.
 
 * Create Play version specific source folders if needed. Following folders are recognizable:
 

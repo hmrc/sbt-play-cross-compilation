@@ -27,7 +27,7 @@ object PlayCrossDependency {
   trait Implicits {
 
     implicit class ModuleIdOps(moduleID: ModuleID) {
-      def dependencyOf(playVersion: PlayVersion): PlayCrossDependency =
+      def crossPlay(playVersion: PlayVersion): PlayCrossDependency =
         PlayCrossDependency(moduleID, playVersion)
     }
   }
