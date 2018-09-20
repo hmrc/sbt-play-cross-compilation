@@ -3,7 +3,7 @@
 
  [ ![Download](https://api.bintray.com/packages/hmrc/releases/sbt-play-cross-compilation/images/download.svg) ](https://bintray.com/hmrc/releases/sbt-play-cross-compilation/_latestVersion)
 
-This is a tiny sbt library to be used in projects requiring cross Play version compilation.
+This is a tiny sbt library to be used in projects requiring cross Play version compilation. The main goal is to use a single source code repository for different versions of Play.
 
 In order to add Play cross compilation capabilities to your project following steps needs to taken:
 * Add this library as an sbt plugin to your project's `plugins.sbt`:
@@ -12,28 +12,26 @@ addSbtPlugin("uk.gov.hmrc" % "sbt-play-cross-compilation" % "<LATEST_VERSION>")
 ```
 * Create an object under the `project` folder extending `AbstractPlayCrossCompilation`
 ```scala
+import uk.gov.hmrc.playcrosscompilation.AbstractPlayCrossCompilation
+import uk.gov.hmrc.playcrosscompilation.PlayVersion.Play25
+
 object PlayCrossCompilation extends AbstractPlayCrossCompilation(defaultPlayVersion = Play25)
 ```
-* Reference your `PlayCrossCompilation`'s `playCrossCompilationSettings` property to your project's sbt settings
+
+The version of play set as part of `PlayCrossCompilation` will be used by sbt and your IDE by default. Allowed values are `PlayVersion.Play25` and `PlayVersion.Play26`.
+
+* Set `PlayCrossCompilation.playCrossCompilationSettings` in your build.sbt
 ```scala
-import PlayCrossCompilation.playCrossCompilationSettings
-
-...
-
-settings(playCrossCompilationSettings)
+settings(PlayCrossCompilation.playCrossCompilationSettings)
 ```
-* Mark Play version dependent libraries with a relevant Play version
+* Configure different dependencies for different versions of Play
 ```scala
-import PlayCrossCompilation._
-
-  val test = DependenciesSeq(
-    "org.pegdown"            % "pegdown"             % "1.6.0" % Test,
-    "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % Test crossPlay Play25,
-    "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test crossPlay Play26
+  val test: Seq[ModuleID] = PlayCrossCompilation.dependencies(
+    shared = Seq("org.pegdown"            % "pegdown"             % "1.6.0" % Test),
+    play25 = Seq("org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % Test),
+    play26 = Seq("org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test)
   )
 ```
-Note: the `crossPlay` keyword becomes available in the context of `DependenciesSeq` only.
-
 * Create Play version specific source folders if needed. Following folders are recognizable:
 
 `src/main/play-25`, `src/main/play-26` for sources
@@ -42,21 +40,20 @@ Note: the `crossPlay` keyword becomes available in the context of `DependenciesS
 
 `test/main/play-25` and`test/main/play-26` for tests
 
-
-The default Play version is defined by the argument passed to the `AbstractPlayCrossCompilation(defaultPlayVersion = Play25)`. This default value can be changed by setting `PLAY_VERSION` environment variable to either `2.5` or `2.6` value.
-
 The common `scala` folders in both `main` and `test` folders are still honoured and should contain non-Play version specific files. 
 
 #### SBT
-In order to run `sbt` commands against certain version of Play, the `PLAY_VERSION` environment variable has to be set prior to an sbt command.
+In order to run `sbt` commands against certain version of Play, the `PLAY_VERSION` environment variable has to be set prior to an sbt command. Allowed values for `PLAY_VERSION` are `2.5` and `2.6`
 Example:
 ```
 export PLAY_VERSION=2.6
 sbt clean test
 ```
 
+If no `PLAY_VERSION` is exported, default Play version from `PlayCrossCompilation` will be used.
+
 #### IDE
-The easiest way to switch between different versions of Play in an IDE, is to change value of the `defaultPlayVersion` defined in the object extending `AbstractPlayCrossCompilation`.
+The easiest way to switch between different versions of Play in an IDE, is to change the value of `defaultPlayVersion` defined in the `PlayCrossCompilation`.
 
 ### License
 
