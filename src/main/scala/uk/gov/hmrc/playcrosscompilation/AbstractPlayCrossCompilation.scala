@@ -29,7 +29,7 @@ object PlayVersion {
 abstract class AbstractPlayCrossCompilation(
   defaultPlayVersion: PlayVersion,
   findEnvProperty: String => Option[String] = sys.env.get
-) extends PlayCrossDependency.Implicits {
+) {
 
   lazy val playVersion: PlayVersion =
     findEnvProperty("PLAY_VERSION") match {
@@ -39,20 +39,16 @@ abstract class AbstractPlayCrossCompilation(
       case Some(sthElse) => throw new Exception(s"Play version '$sthElse' not supported")
     }
 
-  object DependenciesSeq {
-
-    def apply(dependencies: Object*): Seq[ModuleID] = dependencies.foldLeft(Seq.empty[ModuleID]) {
-      case (collectedDependencies, dependency: ModuleID) =>
-        collectedDependencies :+ dependency
-      case (collectedDependencies, PlayCrossDependency(dependency, dependencyPlayVersion)) =>
-        if (playVersion == dependencyPlayVersion)
-          collectedDependencies :+ dependency
-        else
-          collectedDependencies
-      case (_, other) =>
-        throw new IllegalArgumentException(s"$other dependency type is unknown")
-    }
-  }
+  def dependencies(
+    play25: Seq[ModuleID] = Nil,
+    play26: Seq[ModuleID] = Nil,
+    shared: Seq[ModuleID] = Nil): Seq[ModuleID] =
+    shared ++ (
+      playVersion match {
+        case Play25 => play25
+        case Play26 => play26
+      }
+    )
 
   lazy val playCrossCompilationSettings = Seq(
     version ~= updateVersion,

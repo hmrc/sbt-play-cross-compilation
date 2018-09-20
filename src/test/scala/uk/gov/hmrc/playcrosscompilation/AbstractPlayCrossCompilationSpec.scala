@@ -19,11 +19,11 @@ package uk.gov.hmrc.playcrosscompilation
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.Matchers._
 import org.scalatest.WordSpec
-import org.scalatest.prop.TableDrivenPropertyChecks
+import org.scalatest.prop.PropertyChecks
+import uk.gov.hmrc.playcrosscompilation.DependenciesGenerators.{moduleIds, nonEmptyListOf}
 import uk.gov.hmrc.playcrosscompilation.PlayVersion.{Play25, Play26}
-import uk.gov.hmrc.playcrosscompilation.data._
 
-class AbstractPlayCrossCompilationSpec extends WordSpec with MockFactory with TableDrivenPropertyChecks {
+class AbstractPlayCrossCompilationSpec extends WordSpec with MockFactory with PropertyChecks {
 
   "playVersion" should {
 
@@ -97,86 +97,52 @@ class AbstractPlayCrossCompilationSpec extends WordSpec with MockFactory with Ta
     }
   }
 
-  "DependenciesSeq" should {
+  "dependencies" should {
 
-    import sbt._
-
-    "return a list of non-play dependent dependencies if only these are provided" in new Setup {
+    "return a list of shared dependencies if only these are provided" in new Setup {
       `no PLAY_VERSION set`
 
-      forAll(playVersions) { defaultPlayVersion =>
-        val nonPlayDependency1 = "group" %% "non-play-1" % "0.1.0"
-        val nonPlayDependency2 = "group" %% "non-play-2" % "0.1.0"
-
-        val crossCompilation = playCrossCompilation(defaultPlayVersion)
-
-        import crossCompilation._
-
-        DependenciesSeq(nonPlayDependency1, nonPlayDependency2) should contain theSameElementsAs Seq(
-          nonPlayDependency1,
-          nonPlayDependency2
-        )
+      forAll(nonEmptyListOf(moduleIds, withMax = 5)) { shared =>
+        playCrossCompilation(Play26).dependencies(shared = shared) should contain theSameElementsAs shared
       }
     }
 
-    "return a list of non-play dependent dependencies and Play25 dependencies if playVersion is Play25" in new Setup {
+    "return a list of shared and play25 dependencies if playVersion is Play25" in new Setup {
       `no PLAY_VERSION set`
 
-      val crossCompilation = playCrossCompilation(defaultPlayVersion = Play25)
-
-      import crossCompilation._
-
-      val nonPlayDependency1 = "group" %% "non-play-1" % "0.1.0"
-      val nonPlayDependency2 = "group" %% "non-play-2" % "0.1.0"
-      val play25Dependency1  = "group" %% "play25-1"   % "0.1.0" crossPlay Play25
-      val play25Dependency2  = "group" %% "play25-2"   % "0.1.0" crossPlay Play25
-      val play26Dependency1  = "group" %% "play26-1"   % "0.1.0" crossPlay Play26
-      val play26Dependency2  = "group" %% "play26-2"   % "0.1.0" crossPlay Play26
-
-      DependenciesSeq(
-        nonPlayDependency1,
-        nonPlayDependency2,
-        play25Dependency1,
-        play25Dependency2,
-        play26Dependency1,
-        play26Dependency2
-      ) should contain theSameElementsAs Seq(
-        nonPlayDependency1,
-        nonPlayDependency2,
-        play25Dependency1.moduleID,
-        play25Dependency2.moduleID
-      )
+      forAll(
+        nonEmptyListOf(moduleIds, withMax = 5),
+        nonEmptyListOf(moduleIds, withMax = 5),
+        nonEmptyListOf(moduleIds, withMax = 5)) { (shared, play25, play26) =>
+        playCrossCompilation(Play25).dependencies(
+          shared = shared,
+          play25 = play25,
+          play26 = play26
+        ) should contain theSameElementsAs shared ++ play25
+      }
     }
 
-    "return a list of non-play dependent dependencies and Play26 dependencies if playVersion is Play26" in new Setup {
+    "return a list of shared and play26 dependencies if playVersion is Play26" in new Setup {
       `no PLAY_VERSION set`
 
-      val crossCompilation = playCrossCompilation(defaultPlayVersion = Play26)
-
-      import crossCompilation._
-
-      val nonPlayDependency1 = "group" %% "non-play-1" % "0.1.0"
-      val nonPlayDependency2 = "group" %% "non-play-2" % "0.1.0"
-      val play25Dependency1  = "group" %% "play25-1"   % "0.1.0" crossPlay Play25
-      val play25Dependency2  = "group" %% "play25-2"   % "0.1.0" crossPlay Play25
-      val play26Dependency1  = "group" %% "play26-1"   % "0.1.0" crossPlay Play26
-      val play26Dependency2  = "group" %% "play26-2"   % "0.1.0" crossPlay Play26
-
-      DependenciesSeq(
-        nonPlayDependency1,
-        nonPlayDependency2,
-        play25Dependency1,
-        play25Dependency2,
-        play26Dependency1,
-        play26Dependency2
-      ) should contain theSameElementsAs Seq(
-        nonPlayDependency1,
-        nonPlayDependency2,
-        play26Dependency1.moduleID,
-        play26Dependency2.moduleID
-      )
+      forAll(
+        nonEmptyListOf(moduleIds, withMax = 5),
+        nonEmptyListOf(moduleIds, withMax = 5),
+        nonEmptyListOf(moduleIds, withMax = 5)) { (shared, play25, play26) =>
+        playCrossCompilation(Play26).dependencies(
+          shared = shared,
+          play25 = play25,
+          play26 = play26
+        ) should contain theSameElementsAs shared ++ play26
+      }
     }
   }
+
+  private lazy val playVersions = Table(
+    "PlayVersion",
+    Play25,
+    Play26
+  )
 
   private trait Setup {
     val envPropertyFinder = mockFunction[String, Option[String]]
