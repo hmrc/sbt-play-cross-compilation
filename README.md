@@ -1,7 +1,7 @@
 
 # sbt-play-cross-compilation
 
- [ ![Download](https://api.bintray.com/packages/hmrc/releases/sbt-play-cross-compilation/images/download.svg) ](https://bintray.com/hmrc/releases/sbt-play-cross-compilation/_latestVersion)
+[ ![Download](https://api.bintray.com/packages/hmrc/sbt-plugin-releases/sbt-play-cross-compilation/images/download.svg) ](https://bintray.com/hmrc/sbt-plugin-releases/sbt-play-cross-compilation/_latestVersion)
 
 This is a tiny sbt library to be used in projects requiring cross Play version compilation. The main goal is to use a single source code repository for different versions of Play.
 
