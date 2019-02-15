@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,11 @@ abstract class AbstractPlayCrossCompilation(
       }
     )
 
+  def playCorssScalaBuilds(scalaVersions: Seq[String]) = playVersion match {
+    case Play25 => scalaVersions.filter(version => version.startsWith("2.11") || version.startsWith("2.10"))
+    case _ => scalaVersions
+  }
+
   lazy val playCrossCompilationSettings = Seq(
     version ~= updateVersion,
     unmanagedSourceDirectories in Compile += {
@@ -63,7 +68,8 @@ abstract class AbstractPlayCrossCompilation(
     },
     unmanagedResourceDirectories in Test += {
       (sourceDirectory in Test).value / playDir / "resources"
-    }
+    },
+    crossScalaVersions ~= playCorssScalaBuilds
   )
 
   private lazy val releaseSuffix, playDir =
