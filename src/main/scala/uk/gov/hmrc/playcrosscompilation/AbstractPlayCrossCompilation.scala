@@ -69,7 +69,7 @@ abstract class AbstractPlayCrossCompilation(
     unmanagedResourceDirectories in Test += {
       (sourceDirectory in Test).value / playDir / "resources"
     },
-    crossScalaVersions ~= playCorssScalaBuilds
+    crossScalaVersions ~= playCrossScalaBuilds
   )
 
   private lazy val releaseSuffix, playDir =
