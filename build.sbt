@@ -15,7 +15,7 @@ lazy val project = Project(pluginName, file("."))
   )
   .settings(
     targetJvm := "jvm-1.7",
-    scalaVersion := "2.10.7",
+    crossSbtVersions := List("0.13.18", "1.2.8"),
     resolvers += Resolver.url("sbt-plugin-releases", url("https://dl.bintray.com/content/sbt/sbt-plugin-releases"))(
       Resolver.ivyStylePatterns),
     libraryDependencies ++= Seq(
@@ -24,4 +24,9 @@ lazy val project = Project(pluginName, file("."))
       "org.pegdown"    %  "pegdown"    % "1.6.0"   % Test,
       "org.scalacheck" %% "scalacheck" % "1.14.0"  % Test
     )
+  ).settings(
+    scalaCompilerBridgeSource := {
+      val sv = appConfiguration.value.provider.id.version
+      ("org.scala-sbt" % "compiler-interface" % sv % "component").sources
+    }
   )
