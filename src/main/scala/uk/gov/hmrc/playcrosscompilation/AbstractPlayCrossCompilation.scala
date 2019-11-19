@@ -18,12 +18,13 @@ package uk.gov.hmrc.playcrosscompilation
 
 import sbt.Keys._
 import sbt._
-import uk.gov.hmrc.playcrosscompilation.PlayVersion.{Play25, Play26}
+import uk.gov.hmrc.playcrosscompilation.PlayVersion.{Play25, Play26, Play27}
 
 sealed trait PlayVersion
 object PlayVersion {
   case object Play25 extends PlayVersion
   case object Play26 extends PlayVersion
+  case object Play27 extends PlayVersion
 }
 
 abstract class AbstractPlayCrossCompilation(
@@ -35,6 +36,7 @@ abstract class AbstractPlayCrossCompilation(
     findEnvProperty("PLAY_VERSION") match {
       case Some("2.5")   => Play25
       case Some("2.6")   => Play26
+      case Some("2.7")   => Play27
       case None          => defaultPlayVersion
       case Some(sthElse) => throw new Exception(s"Play version '$sthElse' not supported")
     }
@@ -42,17 +44,19 @@ abstract class AbstractPlayCrossCompilation(
   def dependencies(
     play25: Seq[ModuleID] = Nil,
     play26: Seq[ModuleID] = Nil,
+    play27: Seq[ModuleID] = Nil,
     shared: Seq[ModuleID] = Nil): Seq[ModuleID] =
     shared ++ (
       playVersion match {
         case Play25 => play25
         case Play26 => play26
+        case Play27 => play27
       }
     )
 
-  def playCrossScalaBuilds(scalaVersions: Seq[String]) = playVersion match {
+  def playCrossScalaBuilds(scalaVersions: Seq[String]): Seq[String] = playVersion match {
     case Play25 => scalaVersions.filter(version => version.startsWith("2.11"))
-    case _ => scalaVersions
+    case _      => scalaVersions
   }
 
   lazy val playCrossCompilationSettings = Seq(
@@ -72,8 +76,17 @@ abstract class AbstractPlayCrossCompilation(
     crossScalaVersions ~= playCrossScalaBuilds
   )
 
-  private lazy val releaseSuffix, playDir =
-    if (playVersion == Play25) "play-25" else "play-26"
+  private lazy val releaseSuffix = playVersion match {
+    case Play25 => "play-25"
+    case Play26 => "play-26"
+    case Play27 => "play-27"
+  }
+
+  private lazy val playDir = playVersion match {
+    case Play25 => "play-25"
+    case Play26 => "play-26"
+    case Play27 => "play-26" // Play 2.7 appears to be Play 2.6 backwards compatible
+  }
 
   private[hmrc] def updateVersion(v: String): String =
     if (v.endsWith("-SNAPSHOT")) {
