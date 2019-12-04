@@ -15,9 +15,8 @@ lazy val project = Project(pluginName, file("."))
   )
   .settings(
     targetJvm := "jvm-1.7",
-    crossSbtVersions := List("0.13.18", "1.2.8"),
-    resolvers += Resolver.url("sbt-plugin-releases", url("https://dl.bintray.com/content/sbt/sbt-plugin-releases"))(
-      Resolver.ivyStylePatterns),
+    scalaVersion := "2.10.7",
+    crossSbtVersions := List("0.13.18", "1.3.4"),
     libraryDependencies ++= Seq(
       "org.scalatest"  %% "scalatest"  % "3.0.5"   % Test,
       "org.scalamock"  %% "scalamock"  % "4.1.0"   % Test,
