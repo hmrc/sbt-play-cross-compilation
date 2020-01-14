@@ -14,10 +14,8 @@ lazy val project = Project(pluginName, file("."))
     makePublicallyAvailableOnBintray := true
   )
   .settings(
-    targetJvm := "jvm-1.7",
-    crossSbtVersions := List("0.13.18", "1.2.8"),
-    resolvers += Resolver.url("sbt-plugin-releases", url("https://dl.bintray.com/content/sbt/sbt-plugin-releases"))(
-      Resolver.ivyStylePatterns),
+    crossSbtVersions := List("0.13.18", "1.3.4"),
+    scalaVersion := "2.12.10",
     libraryDependencies ++= Seq(
       "org.scalatest"  %% "scalatest"  % "3.0.5"   % Test,
       "org.scalamock"  %% "scalamock"  % "4.1.0"   % Test,
