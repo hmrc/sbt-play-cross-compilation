@@ -1,30 +1,19 @@
-import sbt.Keys._
-import sbt._
-import uk.gov.hmrc.DefaultBuildSettings._
 import uk.gov.hmrc.SbtAutoBuildPlugin
 import uk.gov.hmrc.versioning.SbtGitVersioning
 
 val pluginName = "sbt-play-cross-compilation"
 
 lazy val project = Project(pluginName, file("."))
-  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory)
+  .enablePlugins(SbtPlugin, SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory)
   .settings(
-    sbtPlugin := true,
     majorVersion := 0,
-    makePublicallyAvailableOnBintray := true
-  )
-  .settings(
+    makePublicallyAvailableOnBintray := true,
     crossSbtVersions := List("0.13.18", "1.3.4"),
     scalaVersion := "2.12.10",
     libraryDependencies ++= Seq(
-      "org.scalatest"  %% "scalatest"  % "3.0.5"   % Test,
+      "org.scalatest"  %% "scalatest"  % "3.0.8"   % Test,
       "org.scalamock"  %% "scalamock"  % "4.1.0"   % Test,
       "org.pegdown"    %  "pegdown"    % "1.6.0"   % Test,
-      "org.scalacheck" %% "scalacheck" % "1.14.0"  % Test
+      "org.scalacheck" %% "scalacheck" % "1.14.3"  % Test
     )
-  ).settings(
-    scalaCompilerBridgeSource := {
-      val sv = appConfiguration.value.provider.id.version
-      ("org.scala-sbt" % "compiler-interface" % sv % "component").sources
-    }
   )

@@ -46,7 +46,6 @@ The common `scala` folders in both `main` and `test` folders are still honoured 
 
 This plugin is cross compiled for sbt `0.13.18` and `1.3.4`
 
-
 #### SBT
 In order to run `sbt` commands against certain version of Play, the `PLAY_VERSION` environment variable has to be set prior to an sbt command. Allowed values for `PLAY_VERSION` are `2.5` and `2.6`
 Example:
