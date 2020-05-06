@@ -54,9 +54,14 @@ abstract class AbstractPlayCrossCompilation(
       }
     )
 
-  def playCrossScalaBuilds(scalaVersions: Seq[String]): Seq[String] = playVersion match {
-    case Play25 => scalaVersions.filter(version => version.startsWith("2.11"))
-    case _      => scalaVersions
+  def playScalaVersion(crossScalaVersions: Seq[String])(scalaVersion: String): String = playVersion match {
+    case Play25 => crossScalaVersions.find(_.startsWith("2.11")).getOrElse(scalaVersion)
+    case _      => scalaVersion
+  }
+
+  def playCrossScalaBuilds(crossScalaVersions: Seq[String]): Seq[String] = playVersion match {
+    case Play25 => crossScalaVersions.filter(_.startsWith("2.11"))
+    case _      => crossScalaVersions
   }
 
   lazy val playCrossCompilationSettings = Seq(
@@ -73,6 +78,7 @@ abstract class AbstractPlayCrossCompilation(
     unmanagedResourceDirectories in Test += {
       (sourceDirectory in Test).value / playDir / "resources"
     },
+    scalaVersion := playScalaVersion(crossScalaVersions.value)(scalaVersion.value),
     crossScalaVersions ~= playCrossScalaBuilds
   )
 
