@@ -6,7 +6,7 @@ val pluginName = "sbt-play-cross-compilation"
 lazy val project = Project(pluginName, file("."))
   .enablePlugins(SbtPlugin, SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory)
   .settings(
-    majorVersion := 0,
+    majorVersion := 1,
     makePublicallyAvailableOnBintray := true,
     crossSbtVersions := List("0.13.18", "1.3.4"),
     scalaVersion := "2.12.10",
