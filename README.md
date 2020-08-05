@@ -5,6 +5,13 @@
 
 This is a tiny sbt library to be used in projects requiring cross Play version compilation. The main goal is to use a single source code repository for different versions of Play.
 
+## Migration
+
+### Version 1.0.0
+`playDir` no longer reuses the `play-26` source folders for Play 27, every version of play expects it's own directory. You can override this for the older behaviour - see below for details.
+
+## Usage
+
 In order to add Play cross compilation capabilities to your project following steps needs to taken:
 * Add this library as an sbt plugin to your project's `plugins.sbt`:
 ```scala
@@ -40,7 +47,16 @@ settings(PlayCrossCompilation.playCrossCompilationSettings)
 
 `test/main/play-25` and`test/main/play-26` for tests
 
-The common `scala` folders in both `main` and `test` folders are still honoured and should contain non-Play version specific files. 
+The common `scala` folders in both `main` and `test` folders are still honoured and should contain non-Play version specific files.
+
+Some versions of Play are backward compatible. You can override `playDir` defined in `AbstractPlayCrossCompilation` to reuse source folders, e.g. to reuse "play-26 sources for Play 2.7.
+```scala
+  override lazy val playDir = playVersion match {
+    case Play25 => "play-25"
+    case Play26 => "play-26"
+    case Play27 => "play-26"
+  }
+```
 
 ### Sbt 1.x
 
