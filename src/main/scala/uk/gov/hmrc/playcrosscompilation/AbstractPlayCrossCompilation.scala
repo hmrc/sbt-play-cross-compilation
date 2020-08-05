@@ -88,7 +88,7 @@ abstract class AbstractPlayCrossCompilation(
     case Play27 => "play-27"
   }
 
-  private lazy val playDir = playVersion match {
+  lazy val playDir = playVersion match {
     case Play25 => "play-25"
     case Play26 => "play-26"
     case Play27 => "play-26" // Play 2.7 appears to be Play 2.6 backwards compatible
