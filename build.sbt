@@ -9,7 +9,7 @@ lazy val project = Project(pluginName, file("."))
     majorVersion := 1,
     makePublicallyAvailableOnBintray := true,
     crossSbtVersions := List("0.13.18", "1.3.4"),
-    scalaVersion := "2.12.10",
+    scalaVersion := "2.12.12",
     libraryDependencies ++= Seq(
       "org.scalatest"  %% "scalatest"  % "3.0.8"   % Test,
       "org.scalamock"  %% "scalamock"  % "4.1.0"   % Test,

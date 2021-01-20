@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,8 +79,10 @@ class AbstractPlayCrossCompilationSpec extends WordSpec with MockFactory with Pr
       ("envProperty", "version", "expectedVersion"),
       ("2.5", "2.3.0", "2.3.0-play-25"),
       ("2.6", "2.3.0", "2.3.0-play-26"),
+      ("2.8", "2.3.0", "2.3.0-play-28"),
       ("2.5", "2.3.0-SNAPSHOT", "2.3.0-play-25-SNAPSHOT"),
-      ("2.6", "2.3.0-SNAPSHOT", "2.3.0-play-26-SNAPSHOT")
+      ("2.6", "2.3.0-SNAPSHOT", "2.3.0-play-26-SNAPSHOT"),
+      ("2.8", "2.3.0-SNAPSHOT", "2.3.0-play-28-SNAPSHOT")
     )
 
     forAll(scenarios) { (envProperty, version, expectedVersion) =>
