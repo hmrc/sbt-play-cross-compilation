@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.scalatest.prop.PropertyChecks
 import uk.gov.hmrc.playcrosscompilation.DependenciesGenerators.{moduleIds, nonEmptyListOf}
-import uk.gov.hmrc.playcrosscompilation.PlayVersion.{Play25, Play26}
+import uk.gov.hmrc.playcrosscompilation.PlayVersion.{Play26, Play27, Play28}
 
 class AbstractPlayCrossCompilationSpec extends WordSpec with MockFactory with PropertyChecks {
 
@@ -37,14 +37,14 @@ class AbstractPlayCrossCompilationSpec extends WordSpec with MockFactory with Pr
       }
     }
 
-    "return Play25 regardless of defaultPlayVersion if PLAY_VERSION environment variable is set to '2.5'" in new Setup {
+    "return Play28 regardless of defaultPlayVersion if PLAY_VERSION environment variable is set to '2.8'" in new Setup {
       envPropertyFinder
         .expects("PLAY_VERSION")
         .repeat(playVersions.size)
-        .returning(Some("2.5"))
+        .returning(Some("2.8"))
 
       forAll(playVersions) { defaultPlayVersion =>
-        playCrossCompilation(defaultPlayVersion).playVersion shouldBe Play25
+        playCrossCompilation(defaultPlayVersion).playVersion shouldBe Play28
       }
     }
 
@@ -59,7 +59,7 @@ class AbstractPlayCrossCompilationSpec extends WordSpec with MockFactory with Pr
       }
     }
 
-    "throw an exception if PLAY_VERSION environment variable is set to neither '2.5' nor '2.6'" in new Setup {
+    "throw an exception if PLAY_VERSION environment variable is not set correctly" in new Setup {
       envPropertyFinder
         .expects("PLAY_VERSION")
         .repeat(playVersions.size)
@@ -77,10 +77,10 @@ class AbstractPlayCrossCompilationSpec extends WordSpec with MockFactory with Pr
 
     val scenarios = Table(
       ("envProperty", "version", "expectedVersion"),
-      ("2.5", "2.3.0", "2.3.0-play-25"),
       ("2.6", "2.3.0", "2.3.0-play-26"),
-      ("2.5", "2.3.0-SNAPSHOT", "2.3.0-play-25-SNAPSHOT"),
-      ("2.6", "2.3.0-SNAPSHOT", "2.3.0-play-26-SNAPSHOT")
+      ("2.8", "2.3.0", "2.3.0-play-28"),
+      ("2.6", "2.3.0-SNAPSHOT", "2.3.0-play-26-SNAPSHOT"),
+      ("2.8", "2.3.0-SNAPSHOT", "2.3.0-play-28-SNAPSHOT")
     )
 
     forAll(scenarios) { (envProperty, version, expectedVersion) =>
@@ -107,18 +107,18 @@ class AbstractPlayCrossCompilationSpec extends WordSpec with MockFactory with Pr
       }
     }
 
-    "return a list of shared and play25 dependencies if playVersion is Play25" in new Setup {
+    "return a list of shared and play28 dependencies if playVersion is Play28" in new Setup {
       `no PLAY_VERSION set`
 
       forAll(
         nonEmptyListOf(moduleIds, withMax = 5),
         nonEmptyListOf(moduleIds, withMax = 5),
-        nonEmptyListOf(moduleIds, withMax = 5)) { (shared, play25, play26) =>
-        playCrossCompilation(Play25).dependencies(
+        nonEmptyListOf(moduleIds, withMax = 5)) { (shared, play26, play28) =>
+        playCrossCompilation(Play28).dependencies(
           shared = shared,
-          play25 = play25,
-          play26 = play26
-        ) should contain theSameElementsAs shared ++ play25
+          play26 = play26,
+          play28 = play28
+        ) should contain theSameElementsAs shared ++ play28
       }
     }
 
@@ -128,11 +128,11 @@ class AbstractPlayCrossCompilationSpec extends WordSpec with MockFactory with Pr
       forAll(
         nonEmptyListOf(moduleIds, withMax = 5),
         nonEmptyListOf(moduleIds, withMax = 5),
-        nonEmptyListOf(moduleIds, withMax = 5)) { (shared, play25, play26) =>
+        nonEmptyListOf(moduleIds, withMax = 5)) { (shared, play26, play28) =>
         playCrossCompilation(Play26).dependencies(
           shared = shared,
-          play25 = play25,
-          play26 = play26
+          play26 = play26,
+          play28 = play28
         ) should contain theSameElementsAs shared ++ play26
       }
     }
@@ -140,8 +140,9 @@ class AbstractPlayCrossCompilationSpec extends WordSpec with MockFactory with Pr
 
   private lazy val playVersions = Table(
     "PlayVersion",
-    Play25,
-    Play26
+    Play26,
+    Play27,
+    Play28
   )
 
   private trait Setup {
