@@ -71,9 +71,7 @@ abstract class AbstractPlayCrossCompilation(
     },
     unmanagedResourceDirectories in Test += {
       (sourceDirectory in Test).value / playDir / "resources"
-    },
-    scalaVersion := scalaVersion.value,
-    crossScalaVersions := crossScalaVersions.value
+    }
   )
 
   private lazy val releaseSuffix = playVersion match {
