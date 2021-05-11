@@ -1,11 +1,15 @@
 
 # sbt-play-cross-compilation
 
-[ ![Download](https://api.bintray.com/packages/hmrc/sbt-plugin-releases/sbt-play-cross-compilation/images/download.svg) ](https://bintray.com/hmrc/sbt-plugin-releases/sbt-play-cross-compilation/_latestVersion)
+![](https://img.shields.io/github/v/release/hmrc/sbt-play-cross-compilation)
 
 This is a tiny sbt library to be used in projects requiring cross Play version compilation. The main goal is to use a single source code repository for different versions of Play.
 
 ## Migration
+
+### Version 2.0.0
+- Supports Play __2.6__, __2.7__ and __2.8__. (Play 2.5 support was dropped.)
+- Built for sbt __1.x__. (Sbt 0.13 was dropped.)
 
 ### Version 1.0.0
 `playDir` no longer reuses the `play-26` source folders for Play 27, every version of play expects it's own directory. You can override this for the older behaviour - see below for details.
@@ -19,54 +23,53 @@ addSbtPlugin("uk.gov.hmrc" % "sbt-play-cross-compilation" % "<LATEST_VERSION>")
 ```
 * Create an object under the `project` folder extending `AbstractPlayCrossCompilation`
 ```scala
-import uk.gov.hmrc.playcrosscompilation.AbstractPlayCrossCompilation
-import uk.gov.hmrc.playcrosscompilation.PlayVersion.Play25
+import uk.gov.hmrc.playcrosscompilation.{AbstractPlayCrossCompilation, PlayVersion}
 
-object PlayCrossCompilation extends AbstractPlayCrossCompilation(defaultPlayVersion = Play25)
+object PlayCrossCompilation extends AbstractPlayCrossCompilation(defaultPlayVersion = PlayVersion.Play28)
 ```
 
-The version of play set as part of `PlayCrossCompilation` will be used by sbt and your IDE by default. Allowed values are `PlayVersion.Play25` and `PlayVersion.Play26`.
+The version of play set as part of `PlayCrossCompilation` will be used by sbt and your IDE by default. Allowed values are `PlayVersion.Play26`, `PlayVersion.Play27` and `PlayVersion.Play28`.
 
 * Set `PlayCrossCompilation.playCrossCompilationSettings` in your build.sbt
 ```scala
 settings(PlayCrossCompilation.playCrossCompilationSettings)
 ```
+
+This must come after other settings since it updates previous settings.
+
+
 * Configure different dependencies for different versions of Play
 ```scala
   val test: Seq[ModuleID] = PlayCrossCompilation.dependencies(
-    shared = Seq("org.pegdown"            % "pegdown"             % "1.6.0" % Test),
-    play25 = Seq("org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % Test),
-    play26 = Seq("org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test)
+    shared = Seq("com.vladsch.flexmark"   %  "flexmark-all"       % "0.35.10" % Test),
+    play27 = Seq("org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3"   % Test),
+    play28 = Seq("org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0"   % Test)
   )
 ```
 * Create Play version specific source folders if needed. Following folders are recognizable:
 
-`src/main/play-25`, `src/main/play-26` for sources
+`src/main/play-27`, `src/main/play-28` for sources
 
-`src/main/play-25/resources` and`src/main/play-26/resources` for resources
+`src/main/play-27/resources` and`src/main/play-28/resources` for resources
 
-`test/main/play-25` and`test/main/play-26` for tests
+`test/main/play-27` and`test/main/play-28` for tests
 
 The common `scala` folders in both `main` and `test` folders are still honoured and should contain non-Play version specific files.
 
-Some versions of Play are backward compatible. You can override `playDir` defined in `AbstractPlayCrossCompilation` to reuse source folders, e.g. to reuse "play-26 sources for Play 2.7.
+Some versions of Play are backward compatible. You can override `playDir` defined in `AbstractPlayCrossCompilation` to reuse source folders, e.g. to reuse "play-27" sources for Play 2.8.
 ```scala
   override lazy val playDir = playVersion match {
-    case Play25 => "play-25"
     case Play26 => "play-26"
-    case Play27 => "play-26"
+    case Play27 => "play-27"
+    case Play28 => "play-27"
   }
 ```
 
-### Sbt 1.x
-
-This plugin is cross compiled for sbt `0.13.18` and `1.3.4`
-
 #### SBT
-In order to run `sbt` commands against certain version of Play, the `PLAY_VERSION` environment variable has to be set prior to an sbt command. Allowed values for `PLAY_VERSION` are `2.5` and `2.6`
+In order to run `sbt` commands against certain version of Play, the `PLAY_VERSION` environment variable has to be set prior to an sbt command. Allowed values for `PLAY_VERSION` are `2.6`, `2.7`  and `2.8`
 Example:
 ```
-export PLAY_VERSION=2.6
+export PLAY_VERSION=2.8
 sbt clean test
 ```
 

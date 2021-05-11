@@ -54,24 +54,26 @@ abstract class AbstractPlayCrossCompilation(
       }
     )
 
-  def playCrossScalaBuilds(crossScalaVersions: Seq[String]): Seq[String] = playVersion match {
-    case _      => crossScalaVersions
-  }
+  def playScalaVersion(crossScalaVersions: Seq[String])(scalaVersion: String): String =
+    playVersion match {
+      case Play28 => crossScalaVersions.find(_.startsWith("2.12")).getOrElse(scalaVersion)
+      case _      => scalaVersion
+    }
+
+  def playCrossScalaBuilds(crossScalaVersions: Seq[String]): Seq[String] =
+    playVersion match {
+      case Play28 => crossScalaVersions.filterNot(_.startsWith("2.11"))
+      case _      => crossScalaVersions
+    }
 
   lazy val playCrossCompilationSettings = Seq(
     version ~= updateVersion,
-    unmanagedSourceDirectories in Compile += {
-      (sourceDirectory in Compile).value / playDir
-    },
-    unmanagedSourceDirectories in Test += {
-      (sourceDirectory in Test).value / playDir
-    },
-    unmanagedResourceDirectories in Compile += {
-      (sourceDirectory in Compile).value / playDir / "resources"
-    },
-    unmanagedResourceDirectories in Test += {
-      (sourceDirectory in Test).value / playDir / "resources"
-    }
+    Compile / unmanagedSourceDirectories   += (Compile / sourceDirectory).value / playDir,
+    Test    / unmanagedSourceDirectories   += (Test    / sourceDirectory).value / playDir,
+    Compile / unmanagedResourceDirectories += (Compile / sourceDirectory).value / playDir / "resources",
+    Test    / unmanagedResourceDirectories += (Test    / sourceDirectory).value / playDir / "resources",
+    scalaVersion := playScalaVersion(crossScalaVersions.value)(scalaVersion.value),
+    crossScalaVersions ~= playCrossScalaBuilds
   )
 
   private lazy val releaseSuffix = playVersion match {
@@ -87,9 +89,8 @@ abstract class AbstractPlayCrossCompilation(
   }
 
   private[hmrc] def updateVersion(v: String): String =
-    if (v.endsWith("-SNAPSHOT")) {
+    if (v.endsWith("-SNAPSHOT"))
       v.stripSuffix("-SNAPSHOT") + "-" + releaseSuffix + "-SNAPSHOT"
-    } else {
+    else
       v + "-" + releaseSuffix
-    }
 }

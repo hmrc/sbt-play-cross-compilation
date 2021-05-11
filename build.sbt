@@ -1,13 +1,8 @@
-import uk.gov.hmrc.SbtAutoBuildPlugin
-import uk.gov.hmrc.versioning.SbtGitVersioning
-
-val pluginName = "sbt-play-cross-compilation"
-
-lazy val project = Project(pluginName, file("."))
-  .enablePlugins(SbtPlugin, SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory)
+lazy val project = Project("sbt-play-cross-compilation", file("."))
+  .enablePlugins(SbtPlugin)
   .settings(
     majorVersion := 2,
-    makePublicallyAvailableOnBintray := true,
+    isPublicArtefact := true,
     scalaVersion := "2.12.12",
     libraryDependencies ++= Seq(
       "org.scalatest"  %% "scalatest"  % "3.0.8"   % Test,
