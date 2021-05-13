@@ -54,11 +54,8 @@ abstract class AbstractPlayCrossCompilation(
       }
     )
 
-  def playScalaVersion(crossScalaVersions: Seq[String])(scalaVersion: String): String =
-    playVersion match {
-      case Play28 => crossScalaVersions.find(_.startsWith("2.12")).getOrElse(scalaVersion)
-      case _      => scalaVersion
-    }
+  def playScalaVersion(scalaVersion: String): String =
+    scalaVersion
 
   def playCrossScalaBuilds(crossScalaVersions: Seq[String]): Seq[String] =
     playVersion match {
@@ -72,7 +69,8 @@ abstract class AbstractPlayCrossCompilation(
     Test    / unmanagedSourceDirectories   += (Test    / sourceDirectory).value / playDir,
     Compile / unmanagedResourceDirectories += (Compile / sourceDirectory).value / playDir / "resources",
     Test    / unmanagedResourceDirectories += (Test    / sourceDirectory).value / playDir / "resources",
-    scalaVersion := playScalaVersion(crossScalaVersions.value)(scalaVersion.value),
+    scalaVersion ~= playScalaVersion, // does not refer to crossScalaVersion, since if it is not explicitly defined in
+    // build.sbt, we will have a cyclical depenendency (it is defined as `crossScalaVersions := scalaVersion.value` by default)
     crossScalaVersions ~= playCrossScalaBuilds
   )
 
