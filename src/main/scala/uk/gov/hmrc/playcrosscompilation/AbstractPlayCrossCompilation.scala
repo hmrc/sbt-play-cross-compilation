@@ -59,6 +59,7 @@ abstract class AbstractPlayCrossCompilation(
 
   def playCrossScalaBuilds(crossScalaVersions: Seq[String]): Seq[String] =
     playVersion match {
+      case Play26 => crossScalaVersions.filter(v => v.startsWith("2.11") || v.startsWith("2.12"))
       case Play28 => crossScalaVersions.filterNot(_.startsWith("2.11"))
       case _      => crossScalaVersions
     }
