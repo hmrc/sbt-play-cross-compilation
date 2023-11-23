@@ -1,3 +1,6 @@
+[DEPRECATED]
+
+* This plugin will not support Play version 2.9 and above. As of now, the pattern for cross-compilation projects is the one showcased in the [platops-example-library](https://github.com/hmrc/platops-example-library), which uses standard sbt multi-modules. *
 
 # sbt-play-cross-compilation
 
